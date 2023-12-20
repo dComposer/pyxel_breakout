@@ -44,3 +44,13 @@ class Paddle:
             self.sprite_w * -1,
             self.sprite_w,
         )
+
+    def update(self):
+        # Move the paddle left and right based on the mouse location
+        # clamp it to the edges of the game field
+        self.x = min(pyxel.width - self.w, max(0, pyxel.mouse_x))
+
+    def deflect_force(self, u):
+        # Return the deflect force of the ball on the paddle
+        force = (u - (self.x + self.w / 2)) / 10
+        return force
