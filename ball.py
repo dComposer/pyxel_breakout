@@ -55,5 +55,19 @@ class Ball:
                 if paddle:
                     self.speedX = obj.deflect_force(self.x)
                     self.speedY = self.speedY * -1
+                elif sub_ball_x + self.r >= obj.x > sub_ball_x - self.r:
+                    # Ball hit left side of brick
+                    self.x = obj.x - self.r
+                    self.speedX = self.speedX * -1
+                elif sub_ball_x - self.r <= obj.x + obj.w < sub_ball_x + self.r:
+                    # Ball hit right side of brick
+                    self.x = obj.x + obj.w + self.r
+                    self.speedX = self.speedX * -1
+                elif sub_ball_y + self.r >= obj.y > sub_ball_y - self.r:
+                    self.y = obj.y - self.r
+                    self.speedY = self.speedY * -1
+                elif sub_ball_y - self.r <= obj.y + obj.h < sub_ball_y + self.r:
+                    self.y = obj.y + obj.h + self.r
+                    self.speedY = self.speedY * -1
                 return True  # Collision detected
         return False  # no collission detected
