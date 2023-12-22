@@ -28,10 +28,11 @@ class Ball:
             self.out_of_bounds = True
 
     def detect_collision(self, obj, paddle=False):
+        score = 0
         # Calculate the number of sub-steps for the continuous collision detection
         num_steps = ceil(max(abs(self.speedX), abs(self.speedY)))
         if num_steps == 0:
-            return False  # ball is not moving
+            return False, score  # ball is not moving
 
         # Calculate the step size for each sub-segment
         step_size = 1.0 / num_steps
@@ -59,15 +60,19 @@ class Ball:
                     # Ball hit left side of brick
                     self.x = obj.x - self.r
                     self.speedX = self.speedX * -1
+                    score = obj.score
                 elif sub_ball_x - self.r <= obj.x + obj.w < sub_ball_x + self.r:
                     # Ball hit right side of brick
                     self.x = obj.x + obj.w + self.r
                     self.speedX = self.speedX * -1
+                    score = obj.score
                 elif sub_ball_y + self.r >= obj.y > sub_ball_y - self.r:
                     self.y = obj.y - self.r
                     self.speedY = self.speedY * -1
+                    score = obj.score
                 elif sub_ball_y - self.r <= obj.y + obj.h < sub_ball_y + self.r:
                     self.y = obj.y + obj.h + self.r
                     self.speedY = self.speedY * -1
-                return True  # Collision detected
-        return False  # no collission detected
+                    score = obj.score
+                return True, score  # Collision detected
+        return False, score  # no collission detected
