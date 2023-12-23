@@ -27,6 +27,10 @@ class Ball:
         elif self.y - self.r > pyxel.height:
             self.out_of_bounds = True
 
+    def speedup(self, amount):
+        self.speedX += copysign(amount, self.speedX)
+        self.speedY += copysign(amount, self.speedY)
+
     def detect_collision(self, obj, paddle=False):
         score = 0
         # Calculate the number of sub-steps for the continuous collision detection

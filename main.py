@@ -14,6 +14,11 @@ class GameState(enum.Enum):
     WIN = 4
 
 
+PADDLE_SOUND = 0
+BRICK_SOUND = 1
+DROP_SOUND = 2
+
+
 class App:
     def __init__(self):
         pyxel.init(width=384, height=300, display_scale=3, title="Breakout", fps=60)
@@ -22,6 +27,7 @@ class App:
         self.paddle = Paddle()
         self.ball = Ball()
         self.reset_ball()
+        self.bounces = 0
         self.live = None
         self.score = None
         self.bricks = None
@@ -44,6 +50,7 @@ class App:
         self.ball.speedX = self.paddle.deflect_force(self.ball.x)
         self.ball.speedY = -2.5
         self.ball.out_of_bounds = False
+        self.bounces = 0
 
     def start_next_level(self):
         self.current_level += 1
@@ -61,6 +68,7 @@ class App:
             self.ball.update()
             self.check_collision()
             if self.ball.out_of_bounds:
+                pyxel.play(0, DROP_SOUND)
                 self.lives -= 1
                 if self.lives > 0:
                     self.current_game_state = GameState.DROPPED
@@ -71,16 +79,27 @@ class App:
         # Ball vs Paddle
         collision, _ = self.ball.detect_collision(self.paddle, paddle=True)
         if collision:
-            pass
+            pyxel.play(0, PADDLE_SOUND)
+            self.bounces += 1
+            self.check_speedup()
         # Ball vs Bricks
         for i in reversed(range(len(self.bricks))):
             b = self.bricks[i]
             collision, score = self.ball.detect_collision(b)
             if collision:
+                pyxel.play(0, BRICK_SOUND)
+                self.bounces += 1
+                self.check_speedup()
                 self.score += score
                 del self.bricks[i]
                 self.check_level_complete()
                 break
+
+    def check_speedup(self):
+        if self.bounces == 4:
+            self.ball.speedup(1.0)
+        if self.bounces == 12:
+            self.ball.speedup(2.0)
 
     def check_level_complete(self):
         if len(self.bricks) == 0:
@@ -118,8 +137,8 @@ class App:
             draw_game_over(score=self.score)
         if self.current_game_state == GameState.WIN:
             draw_win(score=self.score)
-        pyxel.text(10, pyxel.height - 20, str(self.current_game_state), 7)
-        pyxel.text(10, pyxel.height - 10, str(self.score), 7)
+        # pyxel.text(10, pyxel.height - 20, str(self.current_game_state), 7)
+        # pyxel.text(10, pyxel.height - 10, str(self.score), 7)
 
 
 # Kickstart our app
