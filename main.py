@@ -1,3 +1,7 @@
+# Force download of relative modules from jsdelivr before importing.
+for module_path in ("ball.py", "paddle.py", "brick.py", "hud.py"):
+    open(module_path).close()
+
 import pyxel
 import enum
 from ball import Ball
